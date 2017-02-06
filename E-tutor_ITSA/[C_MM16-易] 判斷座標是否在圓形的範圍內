@@ -1,0 +1,15 @@
+#include <stdio.h>  
+#include <stdlib.h>  
+  
+int main(void)  
+{  
+    int a,b;  
+    while(scanf("%d %d",&a,&b)!=EOF)  
+    {  
+        if(a*a+b*b>40000)  
+            printf("outside\n");  
+        else  
+            printf("inside\n");  
+    }  
+    return 0;  
+}  

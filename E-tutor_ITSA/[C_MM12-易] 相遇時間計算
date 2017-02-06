@@ -1,0 +1,15 @@
+#include <stdio.h>  
+#include <stdlib.h>  
+  
+int main(void)  
+{  
+    int input;  
+    while(scanf("%d",&input)!=EOF)  
+    {  
+        input = (int)input/0.0238;  
+        input+=9;  
+        input /= 10;  
+        printf("%d\n",input);  
+    }  
+    return 0;  
+}  

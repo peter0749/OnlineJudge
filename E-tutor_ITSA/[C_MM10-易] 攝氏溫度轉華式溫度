@@ -1,0 +1,14 @@
+#include <stdio.h>  
+#include <stdlib.h>  
+  
+int main(void)  
+{  
+    double c;  
+    double temp;  
+    while(scanf("%lf",&c)!=EOF)  
+    {  
+        temp = c*9/5 + 32;  
+        printf("%.1lf\n",temp);  
+    }  
+    return 0;  
+}  
