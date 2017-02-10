@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef unsigned long long int ULL;
-const int MAXN=60;
+const int MAXN=500;
 int sg[MAXN]={0,1,2,3,1};
 set<int> s, l, t;
 ULL input[10010];
@@ -27,8 +27,8 @@ void build(){
 }
 
 int getsg(ULL n) {
-    if(n>=40uLL) return sg[40uLL+(n-40uLL)%12uLL];
-    return sg[n];//n<40
+    if(n>=200uLL) return sg[200uLL+(n-200uLL)%12uLL];
+    return sg[n];//n<200
 }
 
 int main(void) {
