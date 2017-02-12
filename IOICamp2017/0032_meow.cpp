@@ -15,15 +15,24 @@ int main(void) {
             cin>>temp;
             V.push_back(temp);
         }
-        for(int i=0; i<k && i<N; ++i) S.insert(V[i]);
-        int i;
-        for(i=k; i<N; ++i) {
-            if(S.count(V[i])) break;
-            //else
-            S.erase(V[i-k]);
+        bool fail=false;
+        for(int i=0; i<k && i<N; ++i) {
+            if(S.count(V[i])) { // Fails at the beginning.
+                fail=true; break;
+            }
             S.insert(V[i]);
         }
-        cout << (i==N?"Yes\n":"No\n");
+        int i;
+        if(!fail) {
+            for(i=k; i<N; ++i) {
+                if(S.count(V[i])) break;
+                //else
+                S.erase(V[i-k]);
+                S.insert(V[i]);
+            }
+            fail = (i!=N);
+        }
+        cout << (!fail?"Yes\n":"No\n");
         V.clear(); S.clear();
     }
     return 0;
