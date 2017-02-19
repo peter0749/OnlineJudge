@@ -23,7 +23,7 @@ inline void rxd(vector<unsigned int> &arr) {
 vector<unsigned int> arr;
 
 int main(void) {
-    ios::sync_with_stdio(false);
+    ios::sync_with_stdio(false);cin.tie(0);
     int N;
     while(cin>>N) {
         for(int i=0; i<N; ++i) {
