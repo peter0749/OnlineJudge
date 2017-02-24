@@ -23,7 +23,7 @@ class Solution {
                 if(v->second==1) return v->first;
                 else if(v->second!=3) exit(-1);
             }
-            return -1;
+            exit(-1);
         }
         int singleNumber(void) {
             return singleNumber(data);
