@@ -1,4 +1,4 @@
-//Build, Query: O(nm)
+//Build, Query: O(nm), O(n)
 public class NumMatrix {
     private int [][] prefix;
     private int partial_sum(int a, int b, int h) {
