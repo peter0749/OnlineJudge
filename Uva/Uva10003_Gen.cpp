@@ -26,7 +26,7 @@ class Gen{
     Gen(const string &s) {
         ofstream f;
         f.open(s.c_str());
-        f.close(); f.clear(); // delete exist file
+        f.close(); f.clear(); // purge exist file
         this->filename = s;
     }
     ~Gen() {
