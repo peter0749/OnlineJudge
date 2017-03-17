@@ -1,3 +1,4 @@
+// note: stdc++11
 #include <bits/stdc++.h>
 using namespace std;
 class Gen{
