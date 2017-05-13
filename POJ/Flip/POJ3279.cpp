@@ -63,18 +63,16 @@ void solv(void) {
         cout << "IMPOSSIBLE\n";
         return;
     }
-    for (int j=0; j<N; ++j) {
-        cout << opt[0][j] << (j==N-1?'\n':' ');
+    for (int i=0; i<M; ++i) {
+        for (int j=0; j<N; ++j) {
+            cout << opt[i][j] << (j==N-1?'\n':' ');
+        }
     }
 }
 
 int main(void) {
-    //ios::sync_with_stdio(false); cin.tie(0);
-    while (true) {
-        init();
-        cout << endl;
-        solv();
-        cout << endl;
-    }
+    ios::sync_with_stdio(false); cin.tie(0);
+    init();
+    solv();
     return 0;
 }
