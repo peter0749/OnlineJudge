@@ -45,7 +45,7 @@ void getSet(int l, int n, pair<long long int,long long int> *ptr) {
                 minV=temp;
             }
         } else {
-            ptr[i].second  = ptr[i].first = Inf; // mark for delete
+            ptr[i].second  = ptr[i].first = Inf; // mark for delete, 當作陣列裡的衛兵
         }
     }
 }
@@ -65,15 +65,15 @@ void solv(void) {
         // !!注意邊界!! 尋找最接近 -Right 的 Left 值
         long long int temp = Abs(Left[idv].first+Right[i].first); // 自己
         int t = idv;
-        if (idv>0 && Abs(Left[idv-1].first+Right[i].first)<temp) { // 左邊
-            --idv;
+        if (t>0 && Abs(Left[t-1].first+Right[i].first)<temp) { // 左邊
+            idv = t-1;
             temp = Abs(Left[idv].first+Right[i].first);
         }
-        if (idv>=(1<<lN) || Left[idv].second==Inf) continue; // 超出範圍 or 非法
-        if (Abs(Left[t+1].first+Right[i].first)<temp) { // 右邊
+        if (Abs(Left[t+1].first+Right[i].first)<temp) { // 右邊，最右邊有站一個衛兵，所以不用邊街判斷
             idv = t+1;
             temp = Abs(Left[idv].first+Right[i].first);
         }
+        if (Left[idv].second==Inf) continue; // 非法
         num += Left[idv].second; // 更新左右合併的解
         if (temp<=minV) { // 更新答案
             if (temp<minV) minN=num;
