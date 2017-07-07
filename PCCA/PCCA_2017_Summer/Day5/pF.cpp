@@ -36,18 +36,18 @@ inline int inv_M(int a) {
     return fast_pow(a, M-2);
 }
 
+int summ(int a, int n) {
+    if (n==0) return 1L;
+    if (n%2L) { // 奇數
+        return summ(a, n>>1L) * (1 + fast_pow(a, n/2+1)) % M;
+    } 
+    return (summ(a, (n>>1L)-1L) * (1 + fast_pow(a, n/2+1)) %M + fast_pow(a, n/2)) % M;
+}
+
 inline int cal(const int &a, const int &b, const int &n) {
-    long long int p = (long long int)n * (long long int)b + 1L;
-    int ar = fast_pow(a, p);
-    //assert(ar!=1);
-    if (ar==1) { // failed
-        int res = 0;
-        for (int i=0; i<p; ++i) { // from 0~p-1
-            res = (res + ar)%M;
-            ar = a*ar%M;
-        }
-        return res;
-    }
+    long long int p = (long long int)n * (long long int)b;
+    int ar = fast_pow(a, p+1L);
+    if (ar==1) return summ(a, p); // fails
     return ((ar - 1 + M)%M) * inv_M((a-1+M)%M) %M;
 }
 
