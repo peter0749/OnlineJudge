@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 #define PB push_back
-#define MAXN 2000
+#define MAXN 1600
 using namespace std;
 
 struct NODE
@@ -82,18 +82,17 @@ void add_edge(int from, int to, int cap) {
 
 void build(void)
 {
-    // M+N: source; M+N+1; target; [N,M+N): plaent, [0, N): people
     S = MAXN-1;
     T = MAXN-2;
-    int P = MAXN-3-M; // start of index of planet
+    int P = MAXN-2-M; // start of index of planet
 
     // people -> plaent
     for (int i=0; i<N; ++i) {
         int status=0;
-        for (int j=0; j<M; ++j) {
+        for (int j=0, sbit=1; j<M; ++j, sbit<<=1) {
             int input;
             scanf("%d", &input);
-            if (input) status |= (1<<j);
+            if (input) status |= sbit;
         }
         ++s[status];
     }
