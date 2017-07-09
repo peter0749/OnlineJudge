@@ -18,7 +18,7 @@ typedef vector< PII > G;
 const int S=MAXN-2, T=MAXN-1;
 
 int N;
-Net graph[MAXN], base[MAXN];//0~10000, 10001~10100
+Net graph[MAXN], base[MAXN];
 G   data;
 vector<int> seg;
 int level[MAXN];
@@ -80,8 +80,7 @@ void add_edge(Net *net, int from, int to, int cap) {
 void build() { // build a huge net
     // S=MAXN-2, T=MAXN-1
     for (int i=1; i<seg.size(); ++i) {
-        //add_edge(base, S, i-1, 1e6); // S -> segments(inf quantities)
-        add_edge(base, S, i-1, seg[i]-seg[i-1]); // S -> segments(inf quantities)
+        add_edge(base, S, i-1, seg[i]-seg[i-1]); // S -> segments(each number has at most 1 capasity)
     }
     // so that quantized segment node is: [0, seg.size()-1)
 }
@@ -91,19 +90,18 @@ void rebuild(int target) {
 #define NEWNODE1(i) (seg.size()+(i))
 #define NEWNODE2(i) (seg.size()+data.size()+(i))
     for (int i=0; i<MAXN; ++i) {
-        graph[i].clear();
-        graph[i] = base[i]; // copy assignment
+        graph[i].clear(); // destroy original graph
+        graph[i] = base[i]; // restore. copy assignment
     }
     for (int i=0; i<data.size(); ++i) {
         const int &l = data[i].first;
         const int &r = data[i].second;
         int left = lower_bound(seg.begin(), seg.end(), l)-seg.begin();
         int right= lower_bound(seg.begin(), seg.end(), r)-seg.begin();
-        //cout << left << ' ' << right << endl;
         for (int j=left; j<right; ++j) {
             add_edge(graph, j, NEWNODE1(i), seg[j+1]-seg[j]); // segments -> dishes
         }
-        add_edge(graph, NEWNODE1(i), NEWNODE2(i), target);
+        add_edge(graph, NEWNODE1(i), NEWNODE2(i), target); // this limits flow of each dish to "target" flow
         add_edge(graph, NEWNODE2(i), T, target); // dishes -> groumet
     }
 }
@@ -111,8 +109,7 @@ void rebuild(int target) {
 inline bool checker(int d) {
     rebuild(d);
     int res = max_flow();
-    //cout << "target: " << d*N << ':' << res << endl;
-    return d*N==res;
+    return d*N==res; // desired flow
 }
 
 int main(void) {
@@ -132,15 +129,10 @@ int main(void) {
     s.clear();
     //for (const auto &v : seg) cout << v << endl;
 
-    build();
-    /*
-    int maxv = 0;
-    for (int i=0; i<1e3; ++i) {
-        checker(i);
-    }
-    */
-    int l=0, r=1.5e4;
+    build(); // build invariant part of graph
+    
     // binary search
+    int l=0, r=1.5e4;
     while(r-l>1) {
         int m = (l+r)>>1;
         if (checker(m)) l = m;
