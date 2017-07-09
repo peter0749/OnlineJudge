@@ -104,6 +104,8 @@ void rebuild(int target) {
         add_edge(graph, NEWNODE1(i), NEWNODE2(i), target); // this limits flow of each dish to "target" flow
         add_edge(graph, NEWNODE2(i), T, target); // dishes -> groumet
     }
+#undef NEWNODE1
+#undef NEWNODE2
 }
 
 inline bool checker(int d) {
