@@ -88,6 +88,8 @@ class Solution {
         }
         //Solution(){ }
 };
+#undef W
+#undef T
 
 int main(void) {
     Solution sol;
