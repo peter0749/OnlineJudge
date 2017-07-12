@@ -16,7 +16,6 @@ vector<double> y_search;
 struct SegmentTree {
     enum{ MAXN=410, TREEND=4, TREENN=MAXN*TREEND};
     int  seg[TREENN]; // neg, pos
-    int  lazy[TREENN]; // neg, pos
     double  range[TREENN]; // neg, pos
 
 #define HALF_OPEN_INTERVAL
@@ -46,7 +45,6 @@ struct SegmentTree {
         int M = (L+R)>>1;
         if (IN_RANGE) {
             seg[lev] += (op?1:-1);
-            lazy[lev] += (op?1:-1);
             range[lev] = seg[lev]>0?(y_search[R]-y_search[L]):(range[LEFT(lev)]+range[RIGHT(lev)]);
             return;
         }
