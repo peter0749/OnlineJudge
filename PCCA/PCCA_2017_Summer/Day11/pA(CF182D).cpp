@@ -1,3 +1,6 @@
+// CF182D - 37
+// Submmit ID: 28497065
+// Time: 30 ms
 #pragma optimize ("O3")
 #pragma target ("avx")
 #include <bits/stdc++.h>
@@ -12,14 +15,25 @@ struct RollingHash {
     static const PII p, q;
     PII h[MAXN], cache[MAXN];
 
+    inline int mulmod (int a, int b, int m) {
+        int d, r;
+        if(a==0 or b==0) return 0;
+        if(a==1 or b==1) return (a>b?a:b);
+        __asm__("mull %4;"
+                "divl %2"
+                : "=d" (r), "=a"(d)
+                : "r"(m), "a"(a), "d"(b));
+        return  r;
+    }
+
     inline void get_pow(const int n) {
         const PII &base = p;
         const PII &P    = q;
         PII *h = this->cache;
         h[0].F=h[0].S=1;
         for(int i=1; i<=n; ++i) {
-            h[i].F = (h[i-1].F*base.F)%P.F;
-            h[i].S = (h[i-1].S*base.S)%P.S;
+            h[i].F = this->mulmod(h[i-1].F, base.F, P.F);
+            h[i].S = this->mulmod(h[i-1].S, base.S, P.S);
         }
     }
 
@@ -29,8 +43,8 @@ struct RollingHash {
         h[0].F=h[0].S=h[s.length()+1].S=h[s.length()+1].F=0;
         ++h; // index is shifted
         for(int i=0; i!=s.length(); ++i ){
-            h[i].F = ((h[i-1].F*p.F%q.F)+(UT)(s[i]-'a')+1LL)%q.F;
-            h[i].S = ((h[i-1].S*p.S%q.S)+(UT)(s[i]-'a')+1LL)%q.S;
+            h[i].F = (this->mulmod(h[i-1].F,p.F,q.F)+(UT)(s[i]-'a')+1LL)%q.F;
+            h[i].S = (this->mulmod(h[i-1].S,p.S,q.S)+(UT)(s[i]-'a')+1LL)%q.S;
         }
 
     }
@@ -42,8 +56,8 @@ struct RollingHash {
         PII *h = this->h;
         ++h; //shift index
         UT temp1, temp2;//Lazy dog...
-        temp1 = ((q.F - h[i-1].F*pw.F%q.F) + h[i+n-1].F)%q.F;
-        temp2 = ((q.S - h[i-1].S*pw.S%q.S) + h[i+n-1].S)%q.S;
+        temp1 = ((q.F - this->mulmod(h[i-1].F,pw.F,q.F)) + h[i+n-1].F)%q.F;
+        temp2 = ((q.S - this->mulmod(h[i-1].S,pw.S,q.S)) + h[i+n-1].S)%q.S;
         return std::make_pair(temp1, temp2);
     }
 
@@ -51,8 +65,8 @@ struct RollingHash {
         // string: *A -> *2A
         // hash  : (hA+1)*p^n, where n is length of A
         //std::pair<UT,UT> target = this->partial_hash(i, n);
-        target.F = (target.F + target.F*this->cache[n].F%q.F)%q.F;
-        target.S = (target.S + target.S*this->cache[n].S%q.S)%q.S;
+        target.F = (target.F + this->mulmod(target.F,this->cache[n].F,q.F))%q.F;
+        target.S = (target.S + this->mulmod(target.S,this->cache[n].S,q.S))%q.S;
         return target;
     }
     std::pair<UT,UT> extend_self(int i, int n, int t) {
@@ -62,8 +76,8 @@ struct RollingHash {
         int base_times = 1;
         while(t) {
             if (t&1) {
-                res.F = res.F*cache[base_times*n].F%q.F;
-                res.S = res.S*cache[base_times*n].S%q.S;
+                res.F = this->mulmod(res.F,cache[base_times*n].F,q.F);
+                res.S = this->mulmod(res.S,cache[base_times*n].S,q.S);
                 res.F = (res.F+base.F)%q.F;
                 res.S = (res.S+base.S)%q.S;
                 crr_times += base_times;
@@ -73,9 +87,9 @@ struct RollingHash {
         }
         return res;
     }
-//#undef PB
-//#undef F
-//#undef S
+    //#undef PB
+    //#undef F
+    //#undef S
 #undef MAXN
 };
 const std::pair<UT,UT> RollingHash::p(311, 337);
@@ -86,11 +100,15 @@ const std::pair<UT,UT> RollingHash::q(10000103, 10000121);
 using namespace std;
 
 RollingHash ah, bh;
-string a, b;
+char buff[100010];
 
 int main(void) {
-    cin >> a;
-    cin >> b;
+    fgets(buff,100005,stdin);
+    strtok(buff,"\n");
+    string a(buff);
+    fgets(buff,100005,stdin);
+    strtok(buff,"\n");
+    string b(buff);
     ah.get_pow((int)a.length());
     bh.get_pow((int)b.length());
     ah.get_hash(a);
@@ -105,7 +123,6 @@ int main(void) {
     int counter = 0;
     pair<UT,UT> ta = ah.partial_hash(0, a.length());
     pair<UT,UT> tb = bh.partial_hash(0, b.length());
-    //cout << gcdab << endl;
     for (vector<int>::iterator v=cd.begin(); v!=cd.end(); ++v) {
         const int &i = *v;
         pair<UT,UT> ppa = ah.extend_self(0, i, a.length()/i);
@@ -113,16 +130,16 @@ int main(void) {
         pair<UT,UT> tta = ah.partial_hash(0, i);
         pair<UT,UT> ttb = bh.partial_hash(0, i);
         /*
-        cout << "A1: " << ta.F << ' ' << ppa.F << endl;
-        cout << "A2: " << ta.S << ' ' << ppa.S << endl;
-        cout << "B1: " << tb.F << ' ' << ppb.F << endl;
-        cout << "B2: " << tb.S << ' ' << ppb.S << endl;
-        cout << "AB1: " << tta.S << ' ' << ttb.S << endl;
-        cout << "AB2: " << tta.F << ' ' << ttb.F << endl;
-        */
+           cout << "A1: " << ta.F << ' ' << ppa.F << endl;
+           cout << "A2: " << ta.S << ' ' << ppa.S << endl;
+           cout << "B1: " << tb.F << ' ' << ppb.F << endl;
+           cout << "B2: " << tb.S << ' ' << ppb.S << endl;
+           cout << "AB1: " << tta.S << ' ' << ttb.S << endl;
+           cout << "AB2: " << tta.F << ' ' << ttb.F << endl;
+           */
         if (ta==ppa && tb==ppb && tta==ttb) ++counter;
     }
-    cout << counter << endl;
-    
+    printf("%d\n", counter);
+
     return 0;
 }
