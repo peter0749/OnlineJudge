@@ -57,11 +57,11 @@ const UT RollingHash2D::py(5);
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <set>
+#include <map>
 
 RollingHash2D str, pat;
 int s[1000010], p[10010];
-std::multiset<UT> UTset;
+std::map<UT,int> UTmap;
 
 int main(void) {
     using namespace std;
@@ -90,17 +90,23 @@ int main(void) {
                 }
             }
             pat.get_hash(p,P,Q);
-            UTset.insert(pat.partial_hash(0,0,P,Q));
+            ++UTmap[pat.partial_hash(0,0,P,Q)];
         }
+        int cnt=0;
         // O(W^2 * lgT)
         for (int i=0; i+P<=N; ++i) {
             for (int j=0; j+Q<=M; ++j) {
-                UTset.erase(str.partial_hash(i,j,P,Q));
+                map<UT,int>::iterator it = \
+                    UTmap.find(str.partial_hash(i,j,P,Q));
+                if(it!=UTmap.end()) {
+                    cnt += it->second;
+                    UTmap.erase(it);
+                }
             }
         }
         ++cases;
-        printf("Case %d: %d\n", cases, T-(int)UTset.size());
-        UTset.clear();
+        printf("Case %d: %d\n", cases, cnt);
+        UTmap.clear();
     }
     return 0;
 }
