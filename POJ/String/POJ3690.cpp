@@ -1,4 +1,4 @@
-// AC, 壓底線？ 2829MS/3000MS, 12380K
+// AC, 壓底線？ 2829MS/3000MS, 12380K, G++
 #pragma GCC target ("avx")
 #pragma GCC optimize ("O3")
 #include <cstring>
