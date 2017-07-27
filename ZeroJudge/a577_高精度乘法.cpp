@@ -1,4 +1,4 @@
-#pragma GCC target ("avx")
+#pragma GCC target ("avx2")
 #pragma GCC optimize ("Os")
 #pragma GCC optimize ("O3")
 #include <iostream>
@@ -46,11 +46,11 @@ namespace FFT  // WARNING!!! do not reveal this namespace
         // the FFT process
         double angle_numerator = M_PIl * (InverseTransform ? -2 : 2);
         for (int BlockEnd = 1, BlockSize = 2; BlockSize <= NumSamples; BlockSize <<= 1) {
-            double delta_angle = angle_numerator / BlockSize;
-            double sin1 = sin(-delta_angle);
-            double cos1 = cos(-delta_angle);
-            double sin2 = sin(-delta_angle * 2);
-            double cos2 = cos(-delta_angle * 2);
+            double ndelta_angle = -(angle_numerator / BlockSize);
+            double sin1 = sin(ndelta_angle);
+            double cos1 = cos(ndelta_angle);
+            double sin2 = 2*sin1*cos1;
+            double cos2 = 2*cos1*cos1-1.0;
             for (int i = 0; i < NumSamples; i += BlockSize) {
                 complex<double> a1(cos1, sin1), a2(cos2, sin2);
                 for (int j = i, n = 0; n < BlockEnd; ++j, ++n) {
@@ -98,45 +98,47 @@ namespace FFT  // WARNING!!! do not reveal this namespace
     }
 };
 
+char sa[1<<17+10], sb[1<<17+10];
+
 int main(void) {
     using namespace std;
-    ios::sync_with_stdio(false);
-    cin.tie(0); cout.tie(0);
     const double eps=1.5e-1;
-    string sa, sb;
     vector<uint8_t>a, b;
     vector<double> res;
-    vector<long long> res2;
-    while(cin>>sa>>sb) {
-        int maxN = sa.length()+sb.length();
+    vector<uint32_t> res2;
+    while(scanf("%s %s",sa,sb)==2) {
+        int sa_length=strlen(sa);
+        int sb_length=strlen(sb);
+        int maxN = sa_length+sb_length;
         int digitN = 1;
         for (; maxN>digitN; digitN<<=1);
         a.resize(digitN,0);
         b.resize(digitN,0);
-        for (int i=0; i<sa.length(); ++i) {
-            a[i] = sa[ sa.length()-1-i ]-'0';
+        for (int i=0; i<sa_length; ++i) {
+            a[i] = sa[ sa_length-1-i ]-'0';
         }
-        for (int i=digitN-sb.length(), j=0; j<sb.length(); ++i, ++j) {
+        for (int i=digitN-sb_length, j=0; j<sb_length; ++i, ++j) {
             b[i] = sb[j]-'0';
         }
         FFT::convolution<uint8_t>(a, b, res);
         a.clear(), b.clear();
         res2.resize(digitN, 0);
-        for (int i=1; i<=maxN; ++i) {
-            res2[i-1] = ((long long)floor(res[i]+eps));
+        int d = min((int)res.size()-1, (int)maxN);
+        for (int i=1; i<=d; ++i) {
+            res2[i-1] = ((uint32_t)floor(res[i]+eps));
         }
         res.clear();
         for (int i=0; i<maxN-1; ++i) {
-            res2[i+1] += res2[i]/10LL;
-            res2[i  ] %= 10LL; 
+            res2[i+1] += res2[i]/10;
+            res2[i  ] %= 10; 
         }
         bool detected=false;
         for (int i=maxN-1; i>=0; --i) {
-            if (res2[i]>0LL) detected=true;
-            if (detected) cout << res2[i];
+            if (res2[i]>0) detected=true;
+            if (detected) printf("%u",res2[i]);
         }
-        if (!detected) cout << '0';
-        cout << endl;
+        if (!detected) putchar('0');
+        puts("");
         res2.clear();
     }
     return 0;
