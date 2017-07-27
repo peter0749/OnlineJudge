@@ -42,7 +42,7 @@ namespace FFT  // WARNING!!! do not reveal this namespace
     void FFT(bool, const vector<complex<double> >&, vector<complex<double> >&) __attribute__((optimize("fast-math")));
     // FFT 本體， In 是輸入的向量（訊號），Out 是輸出的向量（訊號）
     // 這裏其實不太重要，主要會用得的部分是下方的卷積
-    // NOTE:::::::::::: 兩個向量長度必須是 2^k
+    // NOTE:::::::::::: 兩個向量長度必須是 2^k，等長
     void FFT(bool InverseTransform, const vector<complex<double> >& In, vector<complex<double> >& Out) {
         // simultaneous data copy and bit-reversal ordering into outputs
         int NumSamples = In.size();
