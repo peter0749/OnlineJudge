@@ -23,3 +23,18 @@ public:
         return dp[n];
     }
 };
+
+// Iterative
+class Solution {
+public:
+    int climbStairs(int n) {
+        int x1=1, x2=1;
+        if (n<=1) return 1;
+        for (int i=2; i<=n; ++i) {
+            int x3 = x2 + x1;
+            x1 = x2;
+            x2 = x3;
+        }
+        return x2;
+    }
+};
