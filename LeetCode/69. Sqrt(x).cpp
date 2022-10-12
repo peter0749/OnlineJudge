@@ -2,6 +2,7 @@ class Solution {
 public:
     int mySqrt(int x) {
         /*
+          Runtime: 0 ms, faster than 100.00% of C++ online submissions for Sqrt(x).
           "Not binary search"
           By Newton's method:
           x = sqrt(y) = y^1/2
