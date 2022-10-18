@@ -5,7 +5,6 @@ class Solution(object):
         :rtype: int
         """
         # pop: only when need to extend old bins to right (index - 1)
-        # other: accumulate from old heights from left
         stack = []
         max_area = 0
         for index in range(len(heights)):
@@ -17,10 +16,6 @@ class Solution(object):
                 area = top[1] * (index - top[0])
                 max_area = max(max_area, area)
                 left = top[0] # update left point
-            # accumulate from old heights from left-most to index
-            if len(stack) > 0:
-                area = stack[-1][1] * (index - stack[-1][0] + 1)
-                max_area = max(max_area, area)
             stack.append((left, heights[index]))
         while len(stack) > 0:
             left, height = stack.pop()
