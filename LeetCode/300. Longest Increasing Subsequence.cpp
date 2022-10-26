@@ -22,3 +22,26 @@ public:
         return LCS(nums, sorted);
     }
 };
+
+class Solution {
+public:
+    // O(NlgN) solution
+    int lengthOfLIS(vector<int>& nums) {
+        int N = nums.size();
+        if (N==1) return 1;
+        vector<int> LIS;
+        LIS.push_back(nums[0]);
+        for (int i=1; i<nums.size(); ++i) {
+            int index = distance(LIS.begin(), upper_bound(LIS.begin(), LIS.end(), nums[i]));
+            if (index-1>=0 && index-1<LIS.size() && LIS[index-1]==nums[i])
+                --index;
+            if (index >= LIS.size())
+                LIS.push_back(nums[i]);
+            else
+                LIS[index] = nums[i];
+        }
+        //for (auto v : LIS)
+        //    cout << v << endl;
+        return LIS.size();
+    }
+};
