@@ -45,3 +45,24 @@ public:
         return LIS.size();
     }
 };
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        // O(NlgN) solution, only for getting maximal length
+        int N = nums.size();
+        if (N==1) return 1;
+        vector<int> LIS;
+        LIS.push_back(nums[0]);
+        for (int i=1; i<nums.size(); ++i) {
+            int index = distance(LIS.begin(), upper_bound(LIS.begin(), LIS.end(), nums[i]));
+            if (index-1>=0 && index-1<LIS.size() && LIS[index-1]==nums[i])
+                continue;
+            if (index >= LIS.size())
+                LIS.push_back(nums[i]);
+            else
+                LIS[index] = nums[i];
+        }
+        return LIS.size();
+    }
+};
